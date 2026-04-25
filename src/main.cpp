@@ -1,6 +1,6 @@
-#include <iostream>
+#include <fmt/printf.h>
 
 int main()
 {
-    std::cout << "Hello World" << std::endl;
+    fmt::print("hello world\n");
 }
