@@ -3,6 +3,8 @@
 #include <httplib.h>
 
 int main() {
+    std::cout << "Started" << std::endl;
+
     httplib::Server server;
     OBJService obj_service;
     SceneController controller(obj_service);
