@@ -1,10 +1,12 @@
 #include <httplib.h>
-#include "rest/hello_controller.h"
+#include "rest/scene_controller.h"
+#include "service/obj_service.h"
 
 int main()
 {
     httplib::Server server;
-    HelloController controller;
+    OBJService obj_service;
+    SceneController controller(obj_service);
     int port = 8080;
 
     controller.register_endpoints(server);
