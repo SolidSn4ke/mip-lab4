@@ -3,7 +3,7 @@
 #include <iostream>
 
 // Конструктор
-Vector::Vector(float x = 0, float y = 0, float z = 0) : x(x), y(y), z(z) {}
+Vector::Vector(float x, float y, float z) : x(x), y(y), z(z) {}
 
 // Вывод в консоль
 void Vector::print() const {
