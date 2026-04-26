@@ -1,9 +1,8 @@
-#include <httplib.h>
 #include "rest/scene_controller.h"
 #include "service/obj_service.h"
+#include <httplib.h>
 
-int main()
-{
+int main() {
     httplib::Server server;
     OBJService obj_service;
     SceneController controller(obj_service);

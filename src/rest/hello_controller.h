@@ -2,9 +2,8 @@
 
 #include "rest_controller.h"
 
-class HelloController : public RestController
-{
+class HelloController : public RestController {
 
-public:
-    void register_endpoints(httplib::Server &server) override;
+  public:
+    void register_endpoints(httplib::Server& server) override;
 };

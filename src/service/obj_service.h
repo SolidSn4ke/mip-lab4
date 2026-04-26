@@ -1,8 +1,7 @@
 #pragma once
 
-class OBJService
-{
+class OBJService {
 
-public:
+  public:
     void parse_obj();
 };
