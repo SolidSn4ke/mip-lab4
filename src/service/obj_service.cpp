@@ -3,6 +3,15 @@
 #include <iostream>
 #include <sstream>
 
+static int parseIndex(const std::string& token) {
+    // Берём только часть до '/'
+    size_t pos = token.find('/');
+    if (pos == std::string::npos)
+        return std::stoi(token);
+
+    return std::stoi(token.substr(0, pos));
+}
+
 std::vector<Triangle> OBJService::parse_obj(const std::string& filename) {
     std::vector<Vector> vertices;
     std::vector<Triangle> triangles;
@@ -29,10 +38,13 @@ std::vector<Triangle> OBJService::parse_obj(const std::string& filename) {
 
         // Треугольники
         else if (type == "f") {
-            int i1, i2, i3;
-            ss >> i1 >> i2 >> i3;
+            std::string t1, t2, t3;
+            ss >> t1 >> t2 >> t3;
 
-            // OBJ индексы начинаются с 1
+            int i1 = parseIndex(t1);
+            int i2 = parseIndex(t2);
+            int i3 = parseIndex(t3);
+
             triangles.emplace_back(vertices[i1 - 1], vertices[i2 - 1], vertices[i3 - 1]);
         }
     }
