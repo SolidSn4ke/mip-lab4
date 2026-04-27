@@ -1,7 +1,10 @@
 #include "color.h"
+#include <algorithm>
 
 // Конструктор
-Color::Color(float r, float g, float b) : r(r), g(g), b(b) {}
+Color::Color(float r, float g, float b)
+    : r(std::min(std::max(r, 0.0f), 1.0f)), g(std::min(std::max(g, 0.0f), 1.0f)),
+      b(std::min(std::max(b, 0.0f), 1.0f)) {}
 
 // Конвертация в вектор
 Vector Color::toVector() const {
