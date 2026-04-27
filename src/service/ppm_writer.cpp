@@ -3,7 +3,14 @@
 #include <fstream>
 
 static int to255(float v) {
-    return std::clamp(int(v * 255.0f), 0, 255);
+    int x = int(v * 255.0f);
+
+    if (x < 0)
+        return 0;
+    if (x > 255)
+        return 255;
+
+    return x;
 }
 
 void PPMWriter::write(const Image& image, const std::string& filename) {

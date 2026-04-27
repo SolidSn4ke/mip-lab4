@@ -15,5 +15,7 @@ class Camera {
     Camera(const Vector& pos, const Vector& forward, const Vector& up, const Vector& right,
            float fov);
 
-    Ray generate_ray(float x, float y, int w, int h);
+    Camera(const Vector& pos, const Vector& forward);
+
+    Ray generate_ray(int x, int y, int w, int h);
 };

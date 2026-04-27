@@ -4,9 +4,19 @@
 // Конструктор
 Camera::Camera(const Vector& pos, const Vector& forward, const Vector& up, const Vector& right,
                float fov)
-    : position(position), forward(forward), up(up), right(right), fov(fov) {}
+    : position(pos), forward(forward), up(up), right(right), fov(fov) {}
 
-Ray Camera::generate_ray(float x, float y, int w, int h) {
+Camera::Camera(const Vector& pos, const Vector& forward) : position(pos) {
+    this->forward = forward.normalize();
+
+    Vector worldUp(0, 1, 0);
+
+    right = this->forward.cross(worldUp).normalize();
+    up = right.cross(this->forward).normalize();
+    fov = 1.01f;
+}
+
+Ray Camera::generate_ray(int x, int y, int w, int h) {
     float ndc_x = (x + 0.5f) / w;
     float ndc_y = (y + 0.5f) / h;
 

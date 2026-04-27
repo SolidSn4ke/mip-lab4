@@ -27,6 +27,10 @@ Color trace(const Ray& ray, const Scene& scene) {
         return Color(0.0f, 0.0f, 0.0f); // чёрный фон
     }
 
+    if (bestHit.normal.dot(ray.direction) > 0) {
+        bestHit.normal = bestHit.normal * -1;
+    }
+
     // 3. базовый свет (Lambert)
     Color result(0.0f, 0.0f, 0.0f);
 
