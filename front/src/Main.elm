@@ -27,52 +27,85 @@ main =
 
 type alias Model =
     { objFile : Maybe File
+    , sceneFile : Maybe File
     , alertText : String
+    , alertVisibility : Alert.Visibility
     }
 
 
 type Msg
     = SendForm
     | UpdateObj File
+    | UpdateSceneFile File
     | RecieveResponse (Result Http.Error String)
+    | AlertMsg Alert.Visibility
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model Nothing "", Cmd.none )
+    ( Model Nothing Nothing "" Alert.closed, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SendForm ->
-            ( model, sendForm model )
+            ( model
+            , ( model.objFile, model.sceneFile )
+                |> (\( f1, f2 ) ->
+                        case ( f1, f2 ) of
+                            ( Just obj, Just scene ) ->
+                                sendForm obj scene
+
+                            ( _, _ ) ->
+                                Cmd.none
+                   )
+            )
 
         UpdateObj f ->
             ( { model | objFile = Just f }, Cmd.none )
 
+        UpdateSceneFile f ->
+            ( { model | sceneFile = Just f }, Cmd.none )
+
         RecieveResponse res ->
             case res of
                 Ok s ->
-                    ( { model | alertText = s }, Cmd.none )
+                    ( { model | alertText = s, alertVisibility = Alert.shown }, Cmd.none )
 
                 Err _ ->
-                    ( { model | alertText = "Ошибка" }, Cmd.none )
+                    ( { model | alertText = "Ошибка", alertVisibility = Alert.shown }, Cmd.none )
+
+        AlertMsg visibility ->
+            ( { model | alertVisibility = visibility }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
     Grid.container []
         [ CDN.stylesheet
-        , Alert.simplePrimary [] [ text model.alertText ]
+        , alertElemnt model
         , Form.form []
             [ Form.group []
                 [ Form.label [ for "obj-input" ] [ text "OBJ Файл" ]
                 , input [ id "obj-input", type_ "file", on "change" (D.map UpdateObj fileDecoder) ] []
                 ]
+            , Form.group []
+                [ Form.label [ for "scene-input" ] [ text "Параметры сцены" ]
+                , input [ id "scene-input", type_ "file", on "change" (D.map UpdateSceneFile fileDecoder) ] []
+                ]
             , Button.button [ Button.primary, Button.onClick SendForm ] [ text "Отправить" ]
             ]
         ]
+
+
+alertElemnt : Model -> Html Msg
+alertElemnt model =
+    Alert.config
+        |> Alert.info
+        |> Alert.dismissable AlertMsg
+        |> Alert.children [ text model.alertText ]
+        |> Alert.view model.alertVisibility
 
 
 fileDecoder : D.Decoder File
@@ -80,15 +113,12 @@ fileDecoder =
     D.at [ "target", "files", "0" ] File.decoder
 
 
-sendForm : Model -> Cmd Msg
-sendForm model =
-    case model.objFile of
-        Just objFile ->
-            Http.post
-                { url = "http://localhost:8080/scene"
-                , body = Http.multipartBody [ Http.filePart "scene" objFile ]
-                , expect = Http.expectString RecieveResponse
-                }
-
-        Nothing ->
-            Cmd.none
+sendForm : File -> File -> Cmd Msg
+sendForm objFile sceneFile =
+    Http.post
+        { url = "http://localhost:8080/scene"
+        , body =
+            Http.multipartBody
+                [ Http.filePart "obj" objFile, Http.filePart "scene" sceneFile ]
+        , expect = Http.expectString RecieveResponse
+        }

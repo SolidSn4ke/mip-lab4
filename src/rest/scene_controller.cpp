@@ -6,11 +6,12 @@ SceneController::SceneController(OBJService& obj_service) {
 
 void SceneController::register_endpoints(httplib::Server& server) {
 
-    server.Post("/scene", [](const httplib::Request& req, httplib::Response& resp) {
+    server.Post("/scene", [this](const httplib::Request& req, httplib::Response& resp) {
         if (req.form.has_file("scene")) {
             const auto& file = req.form.get_file("scene");
             std::regex objPattern(R"(.+\.obj)", std::regex::icase);
             if (std::regex_match(file.filename, objPattern)) {
+                auto triangles = obj_service.parse_obj(file.content);
                 resp.set_content("Успех", "text/palin");
             } else
                 resp.set_content("Принимаются только OBJ файлы", "text/palin");
