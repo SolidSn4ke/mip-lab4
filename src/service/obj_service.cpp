@@ -1,5 +1,4 @@
 #include "obj_service.h"
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -12,15 +11,11 @@ static int parseIndex(const std::string& token) {
     return std::stoi(token.substr(0, pos));
 }
 
-std::vector<Triangle> OBJService::parse_obj(const std::string& filename) {
+std::vector<Triangle> OBJService::parse_obj(const std::string& obj_content) {
     std::vector<Vector> vertices;
     std::vector<Triangle> triangles;
 
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Failed to open OBJ file: " << filename << std::endl;
-        return triangles;
-    }
+    std::istringstream file(obj_content);
 
     std::string line;
 

@@ -8,5 +8,5 @@
 class OBJService {
 
   public:
-    static std::vector<Triangle> parse_obj(const std::string& filename);
+    static std::vector<Triangle> parse_obj(const std::string& obj_content);
 };
