@@ -1,12 +1,13 @@
 #pragma once
+#include "color.h"
 #include "vector.h"
 
 class LightSource {
   public:
     Vector position;
     Vector direction;
-    Vector color;
+    Color color;
 
     // Конструктор
-    LightSource(const Vector& position, const Vector& direction, const Vector& color);
+    LightSource(const Vector& position, const Vector& direction, const Color& color);
 };
