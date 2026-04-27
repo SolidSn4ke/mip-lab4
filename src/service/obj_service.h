@@ -1,7 +1,12 @@
 #pragma once
 
+#include "../math/triangle.h"
+#include "../math/vector.h"
+#include <string>
+#include <vector>
+
 class OBJService {
 
   public:
-    void parse_obj();
+    static std::vector<Triangle> parse_obj(const std::string& filename);
 };
