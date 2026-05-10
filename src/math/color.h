@@ -17,4 +17,7 @@ class Color {
 
     // Умножение на число
     Color operator*(float k) const;
+
+    // Покомпонентное умножение цветов
+    Color operator*(const Color& other) const;
 };

@@ -13,10 +13,10 @@ Camera::Camera(const Vector& pos, const Vector& forward) : position(pos) {
 
     right = this->forward.cross(worldUp).normalize();
     up = right.cross(this->forward).normalize();
-    fov = 1.01f;
+    fov = 1.0f; // Нормальный FOV
 }
 
-Ray Camera::generate_ray(int x, int y, int w, int h) {
+Ray Camera::generate_ray(int x, int y, int w, int h) const {
     float ndc_x = (x + 0.5f) / w;
     float ndc_y = (y + 0.5f) / h;
 

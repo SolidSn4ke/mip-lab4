@@ -5,4 +5,4 @@
 #include "scene.h"
 #include "vector.h"
 
-Color trace(const Ray& ray, const Scene& scene);
+Color trace(const Ray& ray, const Scene& scene, int depth = 0);

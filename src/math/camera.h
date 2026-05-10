@@ -17,5 +17,5 @@ class Camera {
 
     Camera(const Vector& pos, const Vector& forward);
 
-    Ray generate_ray(int x, int y, int w, int h);
+    Ray generate_ray(int x, int y, int w, int h) const;
 };

@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
@@ -7,12 +7,18 @@ import Bootstrap.Carousel exposing (Msg)
 import Bootstrap.Form as Form
 import Bootstrap.Grid as Grid
 import Browser
+import Canvas exposing (rect, shapes)
+import Canvas.Settings exposing (Setting, fill)
+import Canvas.Settings.Advanced exposing (GlobalCompositeOperationMode(..))
 import File exposing (File)
 import Html exposing (..)
-import Html.Attributes exposing (for, id, type_)
+import Html.Attributes exposing (for, id, style, type_)
 import Html.Events exposing (on)
 import Http
 import Json.Decode as D
+
+
+port renderPpm : String -> Cmd msg
 
 
 main : Program () Model Msg
@@ -30,6 +36,7 @@ type alias Model =
     , sceneFile : Maybe File
     , alertText : String
     , alertVisibility : Alert.Visibility
+    , imageReady : Bool
     }
 
 
@@ -43,7 +50,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model Nothing Nothing "" Alert.closed, Cmd.none )
+    ( Model Nothing Nothing "" Alert.closed False, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -71,10 +78,12 @@ update msg model =
         RecieveResponse res ->
             case res of
                 Ok s ->
-                    ( { model | alertText = s, alertVisibility = Alert.shown }, Cmd.none )
+                    ( { model | alertText = "Scene rendered successfully!", alertVisibility = Alert.shown, imageReady = True }
+                    , renderPpm s
+                    )
 
                 Err _ ->
-                    ( { model | alertText = "Ошибка", alertVisibility = Alert.shown }, Cmd.none )
+                    ( { model | alertText = "Error", alertVisibility = Alert.shown }, Cmd.none )
 
         AlertMsg visibility ->
             ( { model | alertVisibility = visibility }, Cmd.none )
@@ -84,7 +93,6 @@ view : Model -> Html Msg
 view model =
     Grid.container []
         [ CDN.stylesheet
-        , alertElemnt model
         , Form.form []
             [ Form.group []
                 [ Form.label [ for "obj-input" ] [ text "OBJ Файл" ]
@@ -96,6 +104,14 @@ view model =
                 ]
             , Button.button [ Button.primary, Button.onClick SendForm ] [ text "Отправить" ]
             ]
+        , if model.imageReady then
+            div [ style "text-align" "center", style "margin-top" "20px" ]
+                [ h3 [] [ text "Result" ]
+                , node "canvas" [ id "render-canvas", style "border" "1px solid black" ] []
+                ]
+
+          else
+            text ""
         ]
 
 

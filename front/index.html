@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>PPM Renderer</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    #render-canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="elm"></div>
+
+  <script src="main.js"></script>
+  <script>
+    var app = Elm.Main.init({
+      node: document.getElementById('elm')
+    });
+
+    app.ports.renderPpm.subscribe(function (ppmString) {
+      const canvas = document.getElementById('render-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const lines = ppmString.split('\n');
+      let lineIdx = 0;
+
+      // Basic P3 PPM Parsing
+      const magic = lines[lineIdx++].trim();
+      if (magic !== 'P3') {
+        console.error('Not a P3 PPM image');
+        return;
+      }
+
+      const header = lines[lineIdx++].trim().split(/\s+/);
+      const width = parseInt(header[0]);
+      const height = parseInt(header[1]);
+      const maxColor = lines[lineIdx++].trim();
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const imageData = ctx.createImageData(width, height);
+      const data = imageData.data;
+
+      // Flatten the remaining lines into a list of color values
+      const allValues = [];
+      for (let i = lineIdx; i < lines.length; i++) {
+        const lineValues = lines[i].trim().split(/\s+/);
+        for (const val of lineValues) {
+          if (val) allValues.push(parseInt(val));
+        }
+      }
+
+      for (let i = 0; i < width * height; i++) {
+        const r = allValues[i * 3] || 0;
+        const g = allValues[i * 3 + 1] || 0;
+        const b = allValues[i * 3 + 2] || 0;
+
+        const offset = i * 4;
+        data[offset] = r;
+        data[offset + 1] = g;
+        data[offset + 2] = b;
+        data[offset + 3] = 255;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    });
+  </script>
+</body>
+
+</html>

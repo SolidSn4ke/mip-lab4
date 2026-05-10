@@ -42,3 +42,7 @@ class Vector {
     // Оператор вывода
     friend std::ostream& operator<<(std::ostream& os, const Vector& v);
 };
+
+inline Vector operator*(float k, const Vector& v) {
+    return v * k;
+}

@@ -7,4 +7,5 @@ add_executable(mip-lab4  ${SOURCES})
 target_include_directories(mip-lab4 PRIVATE src)
 
 find_package(httplib REQUIRED)
-target_link_libraries(mip-lab4 PRIVATE httplib::httplib)
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(mip-lab4 PRIVATE httplib::httplib nlohmann_json::nlohmann_json)

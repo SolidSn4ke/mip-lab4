@@ -20,3 +20,8 @@ Color Color::operator+(const Color& other) const {
 Color Color::operator*(float k) const {
     return Color(r * k, g * k, b * k);
 }
+
+// Покомпонентное умножение цветов
+Color Color::operator*(const Color& other) const {
+    return Color(r * other.r, g * other.g, b * other.b);
+}
