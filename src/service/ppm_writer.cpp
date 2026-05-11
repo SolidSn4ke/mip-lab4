@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <ctime>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 
 static int to255(float v) {
