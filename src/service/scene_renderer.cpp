@@ -1,5 +1,6 @@
 #include "scene_renderer.h"
 #include "../math/trace.h"
+#include "post_processor.h"
 #include "ppm_writer.h"
 #include <cmath>
 #include <cstdlib>
@@ -19,8 +20,8 @@ Scene SceneRenderer::create_scene(const std::vector<Triangle>& triangles) {
     return Scene(triangles, lights);
 }
 
-Image SceneRenderer::render_image(const Camera& camera, const Scene& scene) {
-    Image image(width, height);
+Image<Color> SceneRenderer::render_image(const Camera& camera, const Scene& scene) {
+    Image<Color> image(width, height);
 
     std::cout << "Rendering " << width << "x" << height << " with " << samples_per_pixel
               << " samples per pixel..." << std::endl;
@@ -64,7 +65,9 @@ Image SceneRenderer::render_image(const Camera& camera, const Scene& scene) {
 std::string SceneRenderer::renderToString(const std::vector<Triangle>& triangles) {
     Camera camera = create_camera();
     Scene scene = create_scene(triangles);
-    Image image = render_image(camera, scene);
-    PPMWriter::write(image, "./out/");
-    return PPMWriter::writeToString(image);
+    Image<Color> hdrImage = render_image(camera, scene);
+    Image<RGB8> ldrImage = PostProcessor::process(hdrImage);
+    std::string ppmContent = PPMWriter::generatePPM(ldrImage);
+    PPMWriter::write(ppmContent, "./out/");
+    return ppmContent;
 }

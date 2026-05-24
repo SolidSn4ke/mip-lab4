@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../math/camera.h"
+#include "../math/color.h"
 #include "../math/image.h"
 #include "../math/scene.h"
 #include <string>
@@ -31,5 +32,5 @@ class SceneRenderer {
     // Вспомогательные методы
     Camera create_camera();
     Scene create_scene(const std::vector<Triangle>& triangles);
-    Image render_image(const Camera& camera, const Scene& scene);
+    Image<Color> render_image(const Camera& camera, const Scene& scene);
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include <types.h>
+#include <cstdint>
 
 /**
  * @brief Представляет цвет в 8-битном формате RGB.
