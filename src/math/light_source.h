@@ -3,25 +3,54 @@
 #include "vector.h"
 #include <cstdlib>
 
+/**
+ * @brief Площадной источник света в виде треугольника.
+ *
+ * Свет излучается равномерно по поверхности треугольника.
+ */
 class LightSource {
   public:
-    Vector v0, v1, v2; // Vertices of the light triangle
-    Color color;
+    /**
+     * @brief Вершины светящегося треугольника.
+     */
+    Vector v0, v1, v2;
 
-    LightSource(const Vector& v0, const Vector& v1, const Vector& v2, const Color& color)
-        : v0(v0), v1(v1), v2(v2), color(color) {}
+    /**
+     * @brief Интенсивность излучения (radiance / emission).
+     *
+     * Задаёт, сколько света испускает источник в RGB каналах.
+     * Обычно хранится в HDR диапазоне (может быть > 1).
+     */
+    Color emission;
 
-    Vector getNormal() const { return (v1 - v0).cross(v2 - v0).normalize(); }
+    /**
+     * @brief Создаёт площадной источник света (треугольник).
+     *
+     * @param v0 первая вершина
+     * @param v1 вторая вершина
+     * @param v2 третья вершина
+     * @param emission интенсивность излучения света
+     */
+    LightSource(const Vector& v0, const Vector& v1, const Vector& v2, const Color& emission);
 
-    Vector samplePoint() const {
-        float r1 = (float)rand() / RAND_MAX;
-        float r2 = (float)rand() / RAND_MAX;
-        if (r1 + r2 > 1.0f) {
-            r1 = 1.0f - r1;
-            r2 = 1.0f - r2;
-        }
-        return v0 + r1 * (v1 - v0) + r2 * (v2 - v0);
-    }
+    /**
+     * @brief Нормаль поверхности света.
+     *
+     * Используется для освещения и определения стороны излучения.
+     */
+    Vector getNormal() const;
 
-    float getArea() const { return (v1 - v0).cross(v2 - v0).length() * 0.5f; }
+    /**
+     * @brief Случайная точка на поверхности треугольника.
+     *
+     * Используется для Monte Carlo sampling при area lighting.
+     *
+     * @return точка на поверхности источника света
+     */
+    Vector samplePoint() const;
+
+    /**
+     * @brief Площадь треугольника света.
+     */
+    float getArea() const;
 };
