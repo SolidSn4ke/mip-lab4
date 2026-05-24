@@ -19,7 +19,6 @@ void SceneController::register_endpoints(httplib::Server& server) {
                 std::regex jsonPattern(R"(.+\.json)", std::regex::icase);
                 if (std::regex_match(obj_file.filename, objPattern) &&
                     std::regex_match(scene_file.filename, jsonPattern)) {
-                    // Парсить OBJ файл
                     auto triangles = obj_service.parse_obj(obj_file.content);
 
                     if (triangles.empty()) {
@@ -51,7 +50,6 @@ void SceneController::register_endpoints(httplib::Server& server) {
                         renderer.height = data["height"];
                         renderer.samples_per_pixel = data["spp"];
 
-                        // Отрендерить сцену
                         std::string ppm_content = renderer.renderToString(triangles);
 
                         resp.set_content(ppm_content, "image/ppm");
