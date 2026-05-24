@@ -7,7 +7,6 @@
 #include <iostream>
 
 SceneRenderer::SceneRenderer() {
-    // Инициализировать генератор случайных чисел
     srand(time(nullptr));
 }
 

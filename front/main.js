@@ -6820,7 +6820,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('Отправить')
 							]))
 					])),
-				model.imageReady ? A2(
+				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -6845,7 +6845,7 @@ var $author$project$Main$view = function (model) {
 								A2($elm$html$Html$Attributes$style, 'border', '1px solid black')
 							]),
 						_List_Nil)
-					])) : $elm$html$Html$text('')
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

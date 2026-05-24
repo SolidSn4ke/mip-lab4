@@ -7,8 +7,6 @@ import Bootstrap.Carousel exposing (Msg)
 import Bootstrap.Form as Form
 import Bootstrap.Grid as Grid
 import Browser
-import Canvas exposing (rect, shapes)
-import Canvas.Settings exposing (Setting, fill)
 import Canvas.Settings.Advanced exposing (GlobalCompositeOperationMode(..))
 import File exposing (File)
 import Html exposing (..)
@@ -104,24 +102,11 @@ view model =
                 ]
             , Button.button [ Button.primary, Button.onClick SendForm ] [ text "Отправить" ]
             ]
-        , if model.imageReady then
-            div [ style "text-align" "center", style "margin-top" "20px" ]
-                [ h3 [] [ text "Result" ]
-                , node "canvas" [ id "render-canvas", style "border" "1px solid black" ] []
-                ]
-
-          else
-            text ""
+        , div [ style "text-align" "center", style "margin-top" "20px" ]
+            [ h3 [] [ text "Result" ]
+            , node "canvas" [ id "render-canvas", style "border" "1px solid black" ] []
+            ]
         ]
-
-
-alertElemnt : Model -> Html Msg
-alertElemnt model =
-    Alert.config
-        |> Alert.info
-        |> Alert.dismissable AlertMsg
-        |> Alert.children [ text model.alertText ]
-        |> Alert.view model.alertVisibility
 
 
 fileDecoder : D.Decoder File

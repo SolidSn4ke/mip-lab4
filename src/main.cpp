@@ -11,6 +11,7 @@ int main() {
 
     controller.register_endpoints(server);
 
-    printf("Server started on port %d", port);
+    std::cout << "Server started on port " << port << std::endl;
+
     server.listen("localhost", port);
 }
