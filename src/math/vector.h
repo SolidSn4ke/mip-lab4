@@ -2,47 +2,85 @@
 
 #include <iosfwd>
 
+/**
+ * @brief 3D-вектор для математических операций (геометрия, рендеринг).
+ *
+ * Используется для представления точек, направлений и нормалей.
+ */
 class Vector {
   public:
+    /**
+     * @brief Компоненты вектора.
+     */
     float x, y, z;
 
-    // Конструктор
+    /**
+     * @brief Создаёт вектор.
+     * @param x координата X
+     * @param y координата Y
+     * @param z координата Z
+     */
     Vector(float x = 0, float y = 0, float z = 0);
 
-    // Вывод в консоль
+    /**
+     * @brief Выводит вектор в консоль (debug).
+     */
     void print() const;
 
-    // Сложение векторов
+    /**
+     * @brief Сложение векторов.
+     */
     Vector operator+(const Vector& other) const;
 
-    // Вычитание векторов
+    /**
+     * @brief Вычитание векторов.
+     */
     Vector operator-(const Vector& other) const;
 
-    // Сравнение векторов
+    /**
+     * @brief Проверка на равенство (точное сравнение).
+     */
     bool operator==(const Vector& other) const;
 
-    // Умножение вектора на число
+    /**
+     * @brief Умножение вектора на скаляр.
+     */
     Vector operator*(float k) const;
 
-    // Деление вектора на число
+    /**
+     * @brief Деление вектора на скаляр.
+     */
     Vector operator/(float k) const;
 
-    // Векторное произведение
+    /**
+     * @brief Векторное произведение (cross product).
+     */
     Vector cross(const Vector& other) const;
 
-    // Длина вектора
+    /**
+     * @brief Длина (модуль) вектора.
+     */
     float length() const;
 
-    // Нормализация
+    /**
+     * @brief Нормализованный вектор (длина = 1).
+     */
     Vector normalize() const;
 
-    // Скалярное произведение
+    /**
+     * @brief Скалярное произведение (dot product).
+     */
     float dot(const Vector& other) const;
 
-    // Оператор вывода
+    /**
+     * @brief Вывод в поток (например std::cout).
+     */
     friend std::ostream& operator<<(std::ostream& os, const Vector& v);
 };
 
+/**
+ * @brief Умножение скаляра на вектор.
+ */
 inline Vector operator*(float k, const Vector& v) {
     return v * k;
 }
