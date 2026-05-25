@@ -12,7 +12,8 @@
  *
  * @param ray луч, испускаемый камерой
  * @param scene сцена с геометрией и источниками света
+ * @param depth глубина рекурсии
  *
  * @return Итоговый цвет луча
  */
-Color trace(const Ray& ray, const Scene& scene);
+Color trace(const Ray& ray, const Scene& scene, int depth);

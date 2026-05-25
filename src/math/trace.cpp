@@ -8,9 +8,14 @@
 
 #define BLACK Color(0.0f, 0.0f, 0.0f)
 
-Color trace(const Ray& ray, const Scene& scene) {
+Color trace(const Ray& ray, const Scene& scene, int depth) {
+    // Завершаем рекурсию
+    if (depth <= 0) {
+        return BLACK;
+    }
 
-    const float EPS = 1e-6f; // Погрешность
+    // Погрешность
+    const float EPS = 1e-6f;
 
     // Ищем ближайшее пересечение
     float shortest_distance = std::numeric_limits<float>::max();
@@ -79,9 +84,22 @@ Color trace(const Ray& ray, const Scene& scene) {
         // Закон Ламберта
         float NdotL = std::max(normal.dot(to_light), 0.0f);
 
-        Color diffuse = closest_material.diffuseColor * light.emission * NdotL;
+        // BRDF
+        Color brdf = closest_material.diffuseColor / PI;
 
-        result = result + diffuse;
+        Color light_contrib = light.emission * NdotL;
+
+        result = result + brdf * light_contrib;
+    }
+
+    // Русская рулетка
+    float p = std::max({closest_material.diffuseColor.r, closest_material.diffuseColor.g,
+                        closest_material.diffuseColor.b});
+
+    p = std::clamp(p, 0.1f, 0.9f);
+
+    if (rand01() > p) {
+        return result;
     }
 
     // Учитываем глобавльное освещение
@@ -91,7 +109,9 @@ Color trace(const Ray& ray, const Scene& scene) {
     Ray indirectRay(hit_point + normal * EPS, newDir);
 
     // Рекурсивный вызов
-    Color indirect = trace(indirectRay, scene);
+    Color indirect = trace(indirectRay, scene, depth - 1);
+
+    indirect = indirect / p;
 
     // BRDF
     float cosTheta = std::max(normal.dot(newDir), 0.0f);
