@@ -24,16 +24,19 @@ std::string PPMWriter::generatePPM(const Image<RGB8>& image) {
 void PPMWriter::write(const std::string& ppmContent, const std::string& directory) {
     auto t = std::time(nullptr);
     std::tm tm;
+
+#ifdef _WIN32
     localtime_s(&tm, &t);
+#else
+    localtime_r(&t, &tm);
+#endif
 
     std::ostringstream oss;
     oss << std::put_time(&tm, "render_%d-%m-%Y %H-%M-%S.ppm");
 
     std::ofstream out(directory + oss.str());
-
     if (!out.is_open()) {
-        throw std::runtime_error("Cannot open directory: " + directory);
+        throw std::runtime_error("Cannot open file: " + directory + oss.str());
     }
-
     out << ppmContent;
 }
