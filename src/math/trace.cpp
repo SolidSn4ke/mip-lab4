@@ -96,7 +96,14 @@ Color trace(const Ray& ray, const Scene& scene, int depth) {
     float p = std::max({closest_material.diffuseColor.r, closest_material.diffuseColor.g,
                         closest_material.diffuseColor.b});
 
-    p = std::clamp(p, 0.1f, 0.9f);
+    // Выравнивание
+    if (p < 0.1f) {
+        p = 0.1f;
+    }
+
+    if (p > 0.9f) {
+        p = 0.9f;
+    }
 
     if (rand01() > p) {
         return result;
