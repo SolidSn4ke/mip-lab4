@@ -6,18 +6,25 @@
 #include <sstream>
 
 std::string PPMWriter::generatePPM(const Image<RGB8>& image) {
-    std::stringstream ss;
+    std::ostringstream ss;
     ss << "P3\n";
     ss << image.width << " " << image.height << "\n";
     ss << "255\n";
 
+    int count = 0;
+
     for (int y = 0; y < image.height; y++) {
         for (int x = 0; x < image.width; x++) {
-            const RGB8& color = image.getPixel(x, y);
-            ss << color.r << " " << color.g << " " << color.b << "\n";
+            const RGB8& c = image.getPixel(x, y);
+
+            ss << (int)c.r << " " << (int)c.g << " " << (int)c.b << " ";
+
+            if (++count % 5 == 0)
+                ss << "\n";
         }
     }
 
+    ss << "\n";
     return ss.str();
 }
 

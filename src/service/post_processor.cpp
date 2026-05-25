@@ -14,9 +14,9 @@ static uint8_t toByte(double v) {
 
     // Защита от переполнения
     v = (v < 0.0) ? 0.0 : (v > 1.0 ? 1.0 : v);
-
     // Перевод в [0,255] с округлением
-    return static_cast<uint8_t>(v * 255.0 + 0.5);
+    uint8_t result = (uint8_t)(v * 255.0 + 0.5);
+    return result;
 }
 
 Image<RGB8> PostProcessor::process(const Image<Color>& hdrImage) {
@@ -25,7 +25,6 @@ Image<RGB8> PostProcessor::process(const Image<Color>& hdrImage) {
     for (int y = 0; y < hdrImage.height; y++) {
         for (int x = 0; x < hdrImage.width; x++) {
             const Color& c = hdrImage.getPixel(x, y);
-
             RGB8 pixel(toByte(c.r), toByte(c.g), toByte(c.b));
 
             result.setPixel(x, y, pixel);
