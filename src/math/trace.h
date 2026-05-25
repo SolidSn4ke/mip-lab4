@@ -5,4 +5,15 @@
 #include "scene.h"
 #include "vector.h"
 
-Color trace(const Ray& ray, const Scene& scene, int depth = 0);
+/**
+ * @brief Трассирует луч через сцену и вычисляет цвет.
+ *
+ * Проверяет пересечения луча с объектами сцены
+ * и рассчитывает освещение в точке попадания.
+ *
+ * @param ray луч, испускаемый камерой
+ * @param scene сцена с геометрией и источниками света
+ *
+ * @return Итоговый цвет луча
+ */
+Color trace(const Ray& ray, const Scene& scene);
