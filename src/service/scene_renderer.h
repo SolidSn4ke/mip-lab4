@@ -7,6 +7,12 @@
 #include <string>
 #include <vector>
 
+/**
+ * @brief Высокоуровневый рендерер сцены в изображение.
+ *
+ * Отвечает за построение камеры, сцены и запуск процесса рендеринга.
+ * Результат может быть сохранён в PPM файл или возвращён как строка.
+ */
 class SceneRenderer {
   public:
     // Параметры рендеринга
@@ -22,15 +28,44 @@ class SceneRenderer {
 
     SceneRenderer();
 
-    // Отрендерить сцену и сохранить в PPM файл
+    /**
+     * @brief Рендерит сцену и сохраняет результат в PPM файл.
+     *
+     * @param triangles Геометрия сцены (треугольники)
+     * @param output_filename Имя выходного файла
+     */
     void render(const std::vector<Triangle>& triangles, const std::string& output_filename);
 
-    // Отрендерить сцену и вернуть PPM как строку
+    /**
+     * @brief Рендерит сцену и возвращает результат в виде PPM строки.
+     *
+     * @param triangles Геометрия сцены (треугольники)
+     * @return Строка в формате PPM (P3)
+     */
     std::string renderToString(const std::vector<Triangle>& triangles);
 
   private:
-    // Вспомогательные методы
+    /**
+     * @brief Создаёт камеру на основе параметров рендера.
+     *
+     * @return Сконфигурированная камера
+     */
     Camera create_camera();
+
+    /**
+     * @brief Создаёт сцену из входных треугольников.
+     *
+     * @param triangles Геометрия сцены
+     * @return Сцена для трассировки лучей
+     */
     Scene create_scene(const std::vector<Triangle>& triangles);
+
+    /**
+     * @brief Рендерит сцену в HDR изображение.
+     *
+     * @param camera Камера
+     * @param scene Сцена
+     * @return HDR изображение (linear color space)
+     */
     Image<Color> render_image(const Camera& camera, const Scene& scene);
 };

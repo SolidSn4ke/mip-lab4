@@ -3,7 +3,6 @@
 #include "color.h"
 #include "ray.h"
 #include "scene.h"
-#include "vector.h"
 
 /**
  * @brief Трассирует луч через сцену и вычисляет цвет.

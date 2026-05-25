@@ -38,4 +38,9 @@ class Color {
      * @brief Поэлементное умножение цветов (используется в shading/BRDF).
      */
     Color operator*(const Color& other) const;
+
+    /**
+     * @brief Деление цвета на скаляр (масштабирование яркости).
+     */
+    Color operator/(float k) const;
 };
