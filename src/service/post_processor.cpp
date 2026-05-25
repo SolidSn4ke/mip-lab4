@@ -6,14 +6,16 @@ static uint8_t toByte(double v) {
     if (!std::isfinite(v))
         return 0;
 
-    // tone mapping (Reinhard)
+    // Tone mapping (Сжатие диапазона HDR в [0,1])
     v = v / (1.0 + v);
 
-    // gamma correction (approx 2.2)
+    // Gamma correction (Для корректного восприятия на мониторе)
     v = std::pow(v, 1.0 / 2.2);
 
+    // Защита от переполнения
     v = (v < 0.0) ? 0.0 : (v > 1.0 ? 1.0 : v);
 
+    // Перевод в [0,255] с округлением
     return static_cast<uint8_t>(v * 255.0 + 0.5);
 }
 

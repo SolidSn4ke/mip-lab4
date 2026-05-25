@@ -13,7 +13,19 @@ SceneRenderer::SceneRenderer() {
 
 Camera SceneRenderer::create_camera() {
     Vector look_direction = (camera_target - camera_position).normalize();
-    return Camera(camera_position, look_direction);
+
+    // мировой "верх"
+    Vector world_up(0.0f, 1.0f, 0.0f);
+
+    // правая ось камеры
+    Vector right = look_direction.cross(world_up).normalize();
+
+    // реальный up камеры (ортогонализированный)
+    Vector up = right.cross(look_direction).normalize();
+
+    float fov = 60.0f;
+
+    return Camera(camera_position, look_direction, up, right, fov);
 }
 
 Scene SceneRenderer::create_scene(const std::vector<Triangle>& triangles) {
@@ -41,19 +53,12 @@ Image<Color> SceneRenderer::render_image(const Camera& camera, const Scene& scen
                 float offset_y = (rand() / (float)RAND_MAX);
 
                 Ray ray = camera.generate_ray(x + offset_x, y + offset_y, width, height);
-                Color sample_color = trace(ray, scene);
+                Color sample_color = trace(ray, scene, 4);
                 accumulated_color = accumulated_color + sample_color;
             }
 
             // Усредняем цвет
             Color final_color = accumulated_color * (1.0f / samples_per_pixel);
-
-            // Гамма коррекция (gamma = 2.2)
-            float gamma = 2.2f;
-            final_color =
-                Color(std::pow(final_color.r, 1.0f / gamma), std::pow(final_color.g, 1.0f / gamma),
-                      std::pow(final_color.b, 1.0f / gamma));
-
             image.setPixel(x, y, final_color);
         }
     }
