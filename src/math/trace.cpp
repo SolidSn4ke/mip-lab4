@@ -102,8 +102,18 @@ Color trace(const Ray& ray, const Scene& scene, int depth) {
         return result;
     }
 
-    // Учитываем глобавльное освещение
-    Vector newDir = sampleHemisphere(normal);
+    // Учитываем глобальное освещение
+    float p_spec = closest_material.specularCoeff;
+    p_spec /= 100;
+
+    Vector newDir;
+    if (rand01() < p_spec) {
+        // SPECULAR
+        newDir = ray.direction - normal * (2.0f * ray.direction.dot(normal));
+    } else {
+        // DIFFUSE
+        newDir = sampleHemisphere(normal);
+    }
 
     // Новый луч из точки пересечения
     Ray indirectRay(hit_point + normal * EPS, newDir);
