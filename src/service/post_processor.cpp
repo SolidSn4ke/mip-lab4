@@ -1,6 +1,7 @@
 #include "post_processor.h"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 static uint8_t toByte(double v) {
     if (!std::isfinite(v))
@@ -22,6 +23,9 @@ Image<RGB8> PostProcessor::process(const Image<RenderPixel>& renderImage) {
     const float sigma_d = 0.1f;
     const float sigma_n = 0.1f;
     const int radius = 5;
+
+    float sum_prev = 0;
+    float sum_after = 0;
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
@@ -62,10 +66,18 @@ Image<RGB8> PostProcessor::process(const Image<RenderPixel>& renderImage) {
 
             Color final_hdr_color =
                 (total_weight > 0) ? filtered_color * (1.0 / total_weight) : p.finalColor;
+
+            // Y = 0.2126 * R_linear + 0.7152 * G_linear + 0.0722 * B_linear
+            sum_prev += 0.2126 * final_hdr_color.r + 0.7152 * final_hdr_color.g +
+                        0.0722 * final_hdr_color.b;
+            sum_after +=
+                0.2126 * p.finalColor.r + 0.7152 * p.finalColor.g + 0.0722 * p.finalColor.b;
             RGB8 pixel(toByte(final_hdr_color.r), toByte(final_hdr_color.g),
                        toByte(final_hdr_color.b));
             result.setPixel(x, y, pixel);
         }
     }
+    std::cout << "Prev: " << sum_prev << "\n";
+    std::cout << "After: " << sum_after << "\n";
     return result;
 }

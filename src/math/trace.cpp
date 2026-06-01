@@ -55,7 +55,8 @@ RenderPixel trace_first_hit(const Ray& ray, const Scene& scene, int maxDepth) {
             }
         }
 
-        if (in_shadow) continue;
+        if (in_shadow)
+            continue;
 
         float NdotL = std::max(normal.dot(to_light), 0.0f);
         Color brdf = closest_material.diffuseColor / PI;
@@ -63,7 +64,8 @@ RenderPixel trace_first_hit(const Ray& ray, const Scene& scene, int maxDepth) {
         direct_color = direct_color + brdf * light_contrib;
     }
 
-    float p = std::max({closest_material.diffuseColor.r, closest_material.diffuseColor.g, closest_material.diffuseColor.b});
+    float p = std::max({closest_material.diffuseColor.r, closest_material.diffuseColor.g,
+                        closest_material.diffuseColor.b});
     p = std::max(0.1f, std::min(p, 0.9f));
 
     Color indirect_color = BLACK;
@@ -83,14 +85,12 @@ RenderPixel trace_first_hit(const Ray& ray, const Scene& scene, int maxDepth) {
         indirect_color = indirect * brdf * cosTheta;
     }
 
-    return {
-        direct_color + indirect_color,
-        direct_color,
-        indirect_color,
-        shortest_distance,
-        closest_id,
-        normal
-    };
+    return {direct_color + indirect_color,
+            direct_color,
+            indirect_color,
+            shortest_distance,
+            closest_id,
+            normal};
 }
 
 Color trace(const Ray& ray, const Scene& scene, int depth) {
