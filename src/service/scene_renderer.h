@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../math/camera.h"
-#include "../math/color.h"
+#include "../math/trace.h"
 #include "../math/image.h"
 #include "../math/scene.h"
 #include <string>
@@ -61,11 +61,11 @@ class SceneRenderer {
     Scene create_scene(const std::vector<Triangle>& triangles);
 
     /**
-     * @brief Рендерит сцену в HDR изображение.
+     * @brief Рендерит сцену в HDR изображение с дополнительными данными.
      *
      * @param camera Камера
      * @param scene Сцена
-     * @return HDR изображение (linear color space)
+     * @return Изображение с данными о пикселях
      */
-    Image<Color> render_image(const Camera& camera, const Scene& scene);
+    Image<RenderPixel> render_image(const Camera& camera, const Scene& scene);
 };

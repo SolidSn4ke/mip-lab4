@@ -32,8 +32,8 @@ Scene SceneRenderer::create_scene(const std::vector<Triangle>& triangles) {
     return Scene(triangles, lights);
 }
 
-Image<Color> SceneRenderer::render_image(const Camera& camera, const Scene& scene) {
-    Image<Color> image(width, height);
+Image<RenderPixel> SceneRenderer::render_image(const Camera& camera, const Scene& scene) {
+    Image<RenderPixel> image(width, height);
 
     std::cout << "Rendering " << width << "x" << height << " with " << samples_per_pixel
               << " samples per pixel..." << std::endl;
@@ -44,7 +44,7 @@ Image<Color> SceneRenderer::render_image(const Camera& camera, const Scene& scen
         }
 
         for (int x = 0; x < width; x++) {
-            Color accumulated_color(0, 0, 0);
+            RenderPixel accumulated_pixel{Color(0,0,0), Color(0,0,0), Color(0,0,0), 0.0f, -1, Vector(0,0,0)};
 
             // Антиалиасинг: несколько лучей на пиксель
             for (int s = 0; s < samples_per_pixel; s++) {
@@ -53,13 +53,26 @@ Image<Color> SceneRenderer::render_image(const Camera& camera, const Scene& scen
                 float offset_y = (rand() / (float)RAND_MAX);
 
                 Ray ray = camera.generate_ray(x + offset_x, y + offset_y, width, height);
-                Color sample_color = trace(ray, scene, 4);
-                accumulated_color = accumulated_color + sample_color;
+                RenderPixel sample = trace_first_hit(ray, scene, 4);
+
+                accumulated_pixel.finalColor = accumulated_pixel.finalColor + sample.finalColor;
+                accumulated_pixel.directColor = accumulated_pixel.directColor + sample.directColor;
+                accumulated_pixel.indirectColor = accumulated_pixel.indirectColor + sample.indirectColor;
+                accumulated_pixel.depth += sample.depth;
+                // For objectId and normal, we'll take the one from the first sample of the pixel (or average, but usually first hit is representative)
+                if (s == 0) {
+                    accumulated_pixel.objectId = sample.objectId;
+                    accumulated_pixel.normal = sample.normal;
+                }
             }
 
-            // Усредняем цвет
-            Color final_color = accumulated_color * (1.0f / samples_per_pixel);
-            image.setPixel(x, y, final_color);
+            float invS = 1.0f / samples_per_pixel;
+            accumulated_pixel.finalColor = accumulated_pixel.finalColor * invS;
+            accumulated_pixel.directColor = accumulated_pixel.directColor * invS;
+            accumulated_pixel.indirectColor = accumulated_pixel.indirectColor * invS;
+            accumulated_pixel.depth *= invS;
+
+            image.setPixel(x, y, accumulated_pixel);
         }
     }
 
@@ -70,8 +83,8 @@ Image<Color> SceneRenderer::render_image(const Camera& camera, const Scene& scen
 std::string SceneRenderer::renderToString(const std::vector<Triangle>& triangles) {
     Camera camera = create_camera();
     Scene scene = create_scene(triangles);
-    Image<Color> hdrImage = render_image(camera, scene);
-    Image<RGB8> ldrImage = PostProcessor::process(hdrImage);
+    Image<RenderPixel> renderImage = render_image(camera, scene);
+    Image<RGB8> ldrImage = PostProcessor::process(renderImage);
     std::string ppmContent = PPMWriter::generatePPM(ldrImage);
     PPMWriter::write(ppmContent, "./out/");
     return ppmContent;
